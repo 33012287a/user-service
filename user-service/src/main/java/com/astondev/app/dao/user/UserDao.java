@@ -1,6 +1,7 @@
 package com.astondev.app.dao.user;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -11,6 +12,7 @@ import com.astondev.app.model.user.User;
 
 
 public class UserDao {
+    private static final Logger logger = Logger.getLogger(UserDao.class.getName());
     
     public void create(User user) {
         Transaction transaction = null;
@@ -18,12 +20,12 @@ public class UserDao {
             transaction = session.beginTransaction();
             session.persist(user);
             transaction.commit();
-            System.out.println("User created: " + user.getName());
+            logger.info("User created: " + user.getName());
         } catch (Exception e) {
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
-            e.printStackTrace();
+            logger.severe("Error creating user: " + e.getMessage());
         }
     }
 
@@ -35,14 +37,16 @@ public class UserDao {
             if (user != null) {
                 session.remove(user);
                 transaction.commit();
-                System.out.println("User deleted: " + user.getName());
+                logger.info("User deleted: " + user.getName());
                 return true;
+            } else {
+                logger.warning("User with ID " + id + " not found.");
             }
         } catch (Exception e) {
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
-            e.printStackTrace();
+            logger.severe("Error deleting user: " + e.getMessage());
         }
         return false;
     }
@@ -53,9 +57,11 @@ public class UserDao {
             if (user != null) {
                 Hibernate.initialize(user);
                 return user;
+            } else {
+                logger.warning("User with ID " + id + " not found.");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.severe("Error retrieving user: " + e.getMessage());
         }
         return null;
     }
@@ -72,13 +78,13 @@ public class UserDao {
                 user.setEmail(updatedUser.getEmail());
             }
             transaction.commit();
-            System.out.println("User updated: " + updatedUser.getName());
+            logger.info("User updated: " + updatedUser.getName());
             return true;
         } catch (Exception e) {
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
-            e.printStackTrace();
+            logger.severe("Error updating user: " + e.getMessage());
         }
         return false;
     }
@@ -88,7 +94,7 @@ public class UserDao {
             List<User> users = session.createQuery("from User", User.class).list();
             return users;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.severe("Error retrieving all users: " + e.getMessage());
         }
         return null;
     }
