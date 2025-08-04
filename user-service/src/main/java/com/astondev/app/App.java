@@ -74,6 +74,7 @@ public class App {
             transaction = session.beginTransaction();
             session.remove(user);
             transaction.commit();
+            System.out.println("Удален юзер: " + user.getName());
             return true;
         } catch (Exception e) {
             if (transaction != null) {
@@ -88,15 +89,26 @@ public class App {
     public static void main(String[] args) {
         App app = new App();
 
-        Users newUser = new Users("Petr", "asqq@ss.com");
-        app.addUser(newUser);
-        System.out.println(newUser.toString());
+        // Users newUser = new Users("Ivan", "asqq@ss.com");
+        // app.addUser(newUser);
+        // System.out.println(newUser.toString());
 
+        // List<Users> users = app.getAllUsers();
+        // if (users != null) {
+        //     for (Users user : users) {
+        //         System.out.println("User ID: " + user.getId() + ", Name: " + user.getName() + ", Email: " + user.getEmail());
+        //     }
+        // }
+        System.out.println("-----------------------------------------");
+        System.out.println(app.getUserById(1));
+        System.out.println("-----------------------------------------");
         List<Users> users = app.getAllUsers();
         if (users != null) {
             for (Users user : users) {
                 System.out.println("User ID: " + user.getId() + ", Name: " + user.getName() + ", Email: " + user.getEmail());
             }
         }
+        System.out.println("-----------------------------------------");
+        System.out.println(app.removeUser(new Users("Ivan", "asqq@ss.com")));
     }
 }

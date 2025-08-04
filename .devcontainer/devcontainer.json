@@ -7,6 +7,7 @@
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 	"features": {
 		"ghcr.io/devcontainers-extra/features/maven-sdkman:2": {},
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
 		"ghcr.io/itsmechlark/features/postgresql:1": {}
 	}
 

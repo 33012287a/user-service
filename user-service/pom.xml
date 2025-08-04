@@ -18,6 +18,7 @@
 
   <dependencyManagement>
     <dependencies>
+
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
@@ -64,6 +65,11 @@
           <groupId>org.javassist</groupId>
           <artifactId>javassist</artifactId>
           <version>3.30.2-GA</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.logging</groupId>
+        <artifactId>jboss-logging</artifactId>
+        <version>3.6.1.Final</version>
       </dependency>
   </dependencies>
 
