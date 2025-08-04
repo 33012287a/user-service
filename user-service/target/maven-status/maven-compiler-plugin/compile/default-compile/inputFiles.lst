@@ -2,3 +2,4 @@
 /workspaces/user-service1/user-service/src/main/java/com/astondev/app/dao/user/UserDao.java
 /workspaces/user-service1/user-service/src/main/java/com/astondev/app/db/HibernateUtils.java
 /workspaces/user-service1/user-service/src/main/java/com/astondev/app/model/user/User.java
+/workspaces/user-service1/user-service/src/main/java/com/astondev/app/repository/UserConsoleApp.java
