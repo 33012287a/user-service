@@ -1,6 +1,6 @@
-package com.astondev.app;
+package com.astondev.app.model.user;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -12,14 +12,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
+
 @Entity
 @Table(name="users")
-public class Users {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id_seq")
     @SequenceGenerator(name = "users_id_seq", sequenceName = "users_id_seq", allocationSize = 1)
-    @Column(name = "id")
-    private Integer id;
+    private Long id;
 
     @Column(name="name")
     private String name;
@@ -27,19 +27,29 @@ public class Users {
     @Column(name = "email")
     private String email;
 
-    @Column(name="create_at", nullable = false)
+    @Column(name="created_at", nullable = false)
     @CreationTimestamp
-    private Date create_at;
+    private LocalDateTime createdAt;
+
+    @Column(name= "age")
+    private Integer age;
     
 
-    public Users() {}
+    public User() {}
 
-    public Users(String name, String email) {
+    public User(String name, String email, Integer age) {
         this.name = name;
         this.email = email;
+        this.age = age;
+    }
+    public User(Long id, String name, String email, Integer age) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.age = age;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
     
@@ -51,11 +61,15 @@ public class Users {
         return email;
     }
     
-    public Date getCreateAt() {
-        return create_at;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setId(Integer id) {
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -67,13 +81,18 @@ public class Users {
         this.email = email;
     }
 
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
     @Override
     public String toString() {
-        return "Users{" +
+        return "User{" +
             "id=" + id +
             ", name='" + name + '\'' +
+            ", age=" + age +
             ", email='" + email + '\'' +
-            ", create_at=" + create_at +
+            ", created_at=" + createdAt +
             '}';
     }
 }

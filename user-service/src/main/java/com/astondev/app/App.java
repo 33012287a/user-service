@@ -2,113 +2,44 @@ package com.astondev.app;
 
 import java.util.List;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.query.Query;
+import com.astondev.app.dao.user.UserDao;
+import com.astondev.app.model.user.User;
 
 public class App {
-    private final SessionFactory sessionFactory;
-
-    public App() {
-        this.sessionFactory = new Configuration()
-            .configure()
-            .buildSessionFactory();
-    }
-
-    public List<Users> getAllUsers() {
-        try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("from Users", Users.class).list();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public void addUser(Users user) {
-        Transaction transaction = null;
-        try (Session session = sessionFactory.openSession()) {
-            transaction = session.beginTransaction();
-            session.persist(user);
-            session.flush();
-            transaction.commit();
-            System.out.println("Добавлен новый юзер: " + user.getName());
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
-        }
-    }
-
-    public Users getUserById(int id) {
-        try (Session session = sessionFactory.openSession()) {
-            Users user = session.find(Users.class, id);
-            return user;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public boolean saveUser(Users user) {
-        Transaction transaction = null;
-        try (Session session = sessionFactory.openSession()) {
-            transaction = session.beginTransaction();
-            session.persist(user);
-            transaction.commit();
-            return true;
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    public boolean removeUser(Users user) {
-        Transaction transaction = null;
-        try (Session session = sessionFactory.openSession()) {
-            transaction = session.beginTransaction();
-            session.remove(user);
-            transaction.commit();
-            System.out.println("Удален юзер: " + user.getName());
-            return true;
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
-        }
-        return false;
-    }
-    
 
     public static void main(String[] args) {
-        App app = new App();
+        UserDao userDao = new UserDao();
 
-        // Users newUser = new Users("Ivan", "asqq@ss.com");
-        // app.addUser(newUser);
-        // System.out.println(newUser.toString());
-
-        // List<Users> users = app.getAllUsers();
-        // if (users != null) {
-        //     for (Users user : users) {
-        //         System.out.println("User ID: " + user.getId() + ", Name: " + user.getName() + ", Email: " + user.getEmail());
-        //     }
-        // }
-        System.out.println("-----------------------------------------");
-        System.out.println(app.getUserById(1));
-        System.out.println("-----------------------------------------");
-        List<Users> users = app.getAllUsers();
-        if (users != null) {
-            for (Users user : users) {
-                System.out.println("User ID: " + user.getId() + ", Name: " + user.getName() + ", Email: " + user.getEmail());
+        List<User> user = userDao.findAllUsers();
+        if (user != null) {
+            for (User u : user) {
+                System.out.println("User ID: " + u.getId() + ", Name: " + u.getName() + ", Age: " + u.getAge() +", Email: " + u.getEmail() + ", Created At: " + u.getCreatedAt());
             }
         }
-        System.out.println("-----------------------------------------");
-        System.out.println(app.removeUser(new Users("Ivan", "asqq@ss.com")));
+        System.out.println("----------------------------------------------------------");
+        User newUser = new User("John", "asa@.as", 35);
+        userDao.create(newUser);
+        System.out.println("-----------------------------------------------------------");
+
+        userDao.deleteUserById(7);
+
+        System.out.println("-----------------------------------------------------------");
+
+        List<User> updatedUserList = userDao.findAllUsers();
+        if (updatedUserList != null) {
+            for (User u : updatedUserList) {
+                System.out.println("User ID: " + u.getId() + ", Name: " + u.getName() + ", Age: " + u.getAge() +", Email: " + u.getEmail() + ", Created At: " + u.getCreatedAt());
+            }
+        }
+        System.out.println("-----------------------------------------------------------");
+
+        userDao.updateUser(new User(2L, "Kristina", "ad", 20));
+        List<User> finalUserList = userDao.findAllUsers();
+        if (finalUserList != null) {
+            for (User u : finalUserList) {
+                System.out.println("User ID: " + u.getId() + ", Name: " + u.getName() + ", Age: " + u.getAge() +", Email: " + u.getEmail() + ", Created At: " + u.getCreatedAt());
+            }
+        }
+        System.out.println("-----------------------------------------------------------");
     }
 }
