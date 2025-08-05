@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 import com.astondev.app.dao.user.UserDao;
 import com.astondev.app.model.user.User;
+import com.astondev.app.util.InputValidator;
 
 public class UserConsoleApp {
     private final Scanner scanner = new Scanner(System.in);
@@ -46,21 +47,40 @@ public class UserConsoleApp {
         System.out.println("Введите email пользователя:");
         String email = scanner.nextLine();
         System.out.println("Введите возраст пользователя:");
-        Integer age = Integer.parseInt(scanner.nextLine());
 
-        userDao.create(new User(name, email, age));
-        System.out.println("Пользователь успешно добавлен.");
+        try {
+            String ageInput = scanner.nextLine();
+            if (!InputValidator.isValidAge(ageInput)) {
+                System.out.println("Некорректный возраст. Пожалуйста, введите корректный возраст.");
+                return;
+            }
+            Integer age = Integer.parseInt(ageInput);
+            userDao.create(new User(name, email, age));
+            System.out.println("Пользователь успешно добавлен.");
+        } catch (Exception e) {
+            System.out.println("Произошла ошибка при добавлении пользователя: " + e.getMessage());
+            return;
+        }
     }
 
     public void deleteUser() {
         System.out.println("Введите ID пользователя для удаления:");
-        Long userId = Long.parseLong(scanner.nextLine());
-        boolean deleted = userDao.deleteUserById(userId);
-        if (!deleted) {
-            System.out.println("Пользователь с ID " + userId + " не найден.");
+        try {
+            Long userId = Long.parseLong(scanner.nextLine());
+
+            boolean deleted = userDao.deleteUserById(userId);
+            if (!deleted) {
+                System.out.println("Пользователь с ID " + userId + " не найден.");
+                return;
+            }
+            System.out.println("Пользователь с ID " + userId + " успешно удален.");
+        } catch (NumberFormatException e) {
+            System.out.println("Некорректный ID пользователя. Пожалуйста, введите числовой ID.");
+            return;
+        } catch (Exception e) {
+            System.out.println("Произошла ошибка при удалении пользователя: " + e.getMessage());
             return;
         }
-        System.out.println("Пользователь с ID " + userId + " успешно удален.");
     }
 
     public void updateUser() {
@@ -78,15 +98,26 @@ public class UserConsoleApp {
         System.out.println("Введите новый email пользователя:");
         String email = scanner.nextLine();
         System.out.println("Введите новый возраст пользователя:");
-        Long age = Long.parseLong(scanner.nextLine());
 
-        User updated = new User(userId,
-                name.isEmpty() ? user.getName() : name,
-                email.isEmpty() ? user.getEmail() : email,
-                age.intValue() >= 0 ? user.getAge() : age.intValue());
+        try {
+            String ageInput = scanner.nextLine();
+            if (!InputValidator.isValidAge(ageInput)) {
+                System.out.println("Некорректный возраст. Пожалуйста, введите корректный возраст.");
+                return;
+            }
+            Integer age = Integer.parseInt(ageInput);
+            User updated = new User(userId,
+                    name.isEmpty() ? user.getName() : name,
+                    email.isEmpty() ? user.getEmail() : email,
+                    age.intValue() >= 0 ? user.getAge() : age.intValue());
+    
+            userDao.updateUser(updated);
+            System.out.println("Пользователь с ID " + userId + " успешно изменен.");
+        } catch (Exception e) {
+            System.out.println("Произошла ошибка при изменении пользователя: " + e.getMessage());
+            return;
+        }
 
-        userDao.updateUser(updated);
-        System.out.println("Пользователь с ID " + userId + " успешно изменен.");
     }
 
     public void showAllUsers() {
