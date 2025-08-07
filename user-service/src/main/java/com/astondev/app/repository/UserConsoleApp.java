@@ -3,13 +3,13 @@ package com.astondev.app.repository;
 import java.util.List;
 import java.util.Scanner;
 
-import com.astondev.app.dao.user.UserDao;
+import com.astondev.app.dao.user.UserDaoImpl;
 import com.astondev.app.model.user.User;
 import com.astondev.app.util.InputValidator;
 
 public class UserConsoleApp {
     private final Scanner scanner = new Scanner(System.in);
-    private final UserDao userDao = new UserDao();
+    private final UserDaoImpl userDao = new UserDaoImpl();
 
     public void start() {
         while(true) {
@@ -55,7 +55,7 @@ public class UserConsoleApp {
                 return;
             }
             Integer age = Integer.parseInt(ageInput);
-            userDao.create(new User(name, email, age));
+            userDao.createUser(new User(name, email, age));
             System.out.println("Пользователь успешно добавлен.");
         } catch (Exception e) {
             System.out.println("Произошла ошибка при добавлении пользователя: " + e.getMessage());
@@ -121,7 +121,7 @@ public class UserConsoleApp {
     }
 
     public void showAllUsers() {
-        List<User> userList = userDao.findAllUsers();
+        List<User> userList = userDao.getAllUsers();
         if (userList != null && !userList.isEmpty()) {
             System.out.println("Список всех пользователей:");
             for (User user : userList) {
