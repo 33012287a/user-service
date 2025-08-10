@@ -30,7 +30,7 @@ public class UserConsoleApp {
     }
 
     public void printMenu() {
-        System.out.println("""
+        System.out.print("""
                 ========== МЕНЮ ===========
                 1 - Добавить пользователя
                 2 - Удалить пользователя
