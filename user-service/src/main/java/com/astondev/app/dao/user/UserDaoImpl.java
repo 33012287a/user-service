@@ -9,14 +9,15 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
 
-import com.astondev.app.db.HibernateUtils;
+import com.astondev.app.exceptions.UserDaoException;
 import com.astondev.app.model.user.User;
+import com.astondev.app.utils.HibernateUtils;
 
 
 public class UserDaoImpl implements UserDao {
     private static final Logger logger = Logger.getLogger(UserDaoImpl.class.getName());
     
-    public void createUser(User user) {
+    public void createUser(User user) throws UserDaoException{
         Transaction transaction = null;
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -24,24 +25,18 @@ public class UserDaoImpl implements UserDao {
             transaction.commit();
             logger.info("User created: " + user.getName());
         } catch (ConstraintViolationException e) {
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
-            logger.warning("User creation failed due to constraint violation: " + e.getMessage());
+            rollbackIfActive(transaction);
+            throw new UserDaoException("User creation failed due to constraint violation: " + e.getMessage(), e);
         } catch (HibernateException e) {
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
-            logger.severe("Hibernate error during user creation: " + e.getMessage());
+            rollbackIfActive(transaction);
+            throw new UserDaoException("Hibernate error during user creation: " + e.getMessage(), e);
         } catch (Exception e) {
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
-            logger.severe("Error creating user: " + e.getMessage());
+            rollbackIfActive(transaction);
+            throw new UserDaoException("Error creating user: " + e.getMessage(), e);
         }
     }
 
-    public boolean deleteUserById(Long id) {
+    public boolean deleteUserById(Long id) throws UserDaoException {
         Transaction transaction = null;
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -55,20 +50,14 @@ public class UserDaoImpl implements UserDao {
                 logger.warning("User with ID " + id + " not found.");
             }
         } catch (ConstraintViolationException e) {
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
-            logger.warning("User deletion failed due to constraint violation: " + e.getMessage());
+            rollbackIfActive(transaction);
+            throw new UserDaoException("User deletion failed due to constraint violation: " + e.getMessage(), e);
         } catch (HibernateException e) {
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
-            logger.severe("Hibernate error during user deletion: " + e.getMessage());
+            rollbackIfActive(transaction);
+            throw new UserDaoException("Hibernate error during user deletion: " + e.getMessage(), e);
         } catch (Exception e) {
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
-            logger.severe("Error deleting user: " + e.getMessage());
+            rollbackIfActive(transaction);
+            throw new UserDaoException("Error deleting user: " + e.getMessage(), e);
         }
         return false;
     }
@@ -81,13 +70,13 @@ public class UserDaoImpl implements UserDao {
                 return user;
             } else {
                 logger.warning("User with ID " + id + " not found.");
-            }
+                }
         } catch (ConstraintViolationException e) {
-            logger.warning("User retrieval failed due to constraint violation: " + e.getMessage());
+            throw new UserDaoException("User retrieval failed due to constraint violation: " + e.getMessage(), e);
         } catch (HibernateException e) {
-            logger.severe("Hibernate error during user retrieval: " + e.getMessage());
+            throw new UserDaoException("Hibernate error during user retrieval: " + e.getMessage(), e);
         } catch (Exception e) {
-            logger.severe("Error retrieving user: " + e.getMessage());
+            throw new UserDaoException("Error retrieving user: " + e.getMessage(), e);
         }
         return null;
     }
@@ -96,7 +85,6 @@ public class UserDaoImpl implements UserDao {
         Transaction transaction = null;
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            
             User user = session.find(User.class, updatedUser.getId());
             if (user != null) {
                 user.setName(updatedUser.getName());
@@ -105,22 +93,16 @@ public class UserDaoImpl implements UserDao {
             }
             transaction.commit();
             logger.info("User updated: " + updatedUser.getName());
-            return true;
+            return true;   
         } catch (ConstraintViolationException e) {
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
-            logger.warning("User update failed due to constraint violation: " + e.getMessage());
+            rollbackIfActive(transaction);
+            throw new UserDaoException("User update failed due to constraint violation: " + e.getMessage(), e);
         } catch (HibernateException e) {
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
-            logger.severe("Hibernate error during user update: " + e.getMessage());
+           rollbackIfActive(transaction);
+            throw new UserDaoException("Hibernate error during user update: " + e.getMessage(), e);
         } catch (Exception e) {
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
-            logger.severe("Error updating user: " + e.getMessage());
+            rollbackIfActive(transaction);
+            throw new UserDaoException("Error updating user: " + e.getMessage(), e);
         }
         return false;
     }
@@ -130,11 +112,16 @@ public class UserDaoImpl implements UserDao {
             List<User> users = session.createQuery("from User", User.class).list();
             return users;
         } catch (HibernateException e) {
-            logger.severe("Hibernate error during user retrieval: " + e.getMessage());
+            throw new UserDaoException("Hibernate error during user retrieval: " + e.getMessage(), e);
         } catch (Exception e) {
-            logger.severe("Error retrieving all users: " + e.getMessage());
+            throw new UserDaoException("Error retrieving users: " + e.getMessage(), e);
         }
         return null;
     }
-
+    
+    private void rollbackIfActive(Transaction transaction) {
+        if (transaction != null && transaction.isActive()) {
+            transaction.rollback();
+        }
 }
+

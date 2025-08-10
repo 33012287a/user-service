@@ -1,11 +1,11 @@
-package com.astondev.app.repository;
+package com.astondev.app;
 
 import java.util.List;
 import java.util.Scanner;
 
 import com.astondev.app.dao.user.UserDaoImpl;
 import com.astondev.app.model.user.User;
-import com.astondev.app.util.InputValidator;
+import com.astondev.app.utils.InputValidator;
 
 public class UserConsoleApp {
     private final Scanner scanner = new Scanner(System.in);
@@ -56,6 +56,7 @@ public class UserConsoleApp {
             }
             Integer age = Integer.parseInt(ageInput);
             userDao.createUser(new User(name, email, age));
+
             System.out.println("Пользователь успешно добавлен.");
         } catch (Exception e) {
             System.out.println("Произошла ошибка при добавлении пользователя: " + e.getMessage());
@@ -106,11 +107,13 @@ public class UserConsoleApp {
                 return;
             }
             Integer age = Integer.parseInt(ageInput);
-            User updated = new User(userId,
+            User updated = new User(
                     name.isEmpty() ? user.getName() : name,
                     email.isEmpty() ? user.getEmail() : email,
-                    age.intValue() >= 0 ? user.getAge() : age.intValue());
-    
+                    age
+            );
+            updated.setId(userId);
+
             userDao.updateUser(updated);
             System.out.println("Пользователь с ID " + userId + " успешно изменен.");
         } catch (Exception e) {
