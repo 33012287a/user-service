@@ -24,5 +24,6 @@ class UserDaoImplTest {
 
     @Test
     public void testCreateUser() {
-        
+        System.out.println("Test for createUser method");
+    }
 }
