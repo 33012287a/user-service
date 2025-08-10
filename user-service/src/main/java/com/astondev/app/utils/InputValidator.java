@@ -1,4 +1,4 @@
-package com.astondev.app.util;
+package com.astondev.app.utils;
 
 public class InputValidator {
     public static boolean isValidAge(String age) {

@@ -96,7 +96,13 @@ public class UserDaoImpl implements UserDao {
         Transaction transaction = null;
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.merge(updatedUser);
+            
+            User user = session.find(User.class, updatedUser.getId());
+            if (user != null) {
+                user.setName(updatedUser.getName());
+                user.setAge(updatedUser.getAge());
+                user.setEmail(updatedUser.getEmail());
+            }
             transaction.commit();
             logger.info("User updated: " + updatedUser.getName());
             return true;

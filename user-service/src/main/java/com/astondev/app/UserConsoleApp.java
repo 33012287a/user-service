@@ -109,7 +109,7 @@ public class UserConsoleApp {
             User updated = new User(userId,
                     name.isEmpty() ? user.getName() : name,
                     email.isEmpty() ? user.getEmail() : email,
-                    age.intValue() >= 0 ? age.intValue() : user.getAge());
+                    age.intValue() >= 0 ? user.getAge() : age.intValue());
     
             userDao.updateUser(updated);
             System.out.println("Пользователь с ID " + userId + " успешно изменен.");

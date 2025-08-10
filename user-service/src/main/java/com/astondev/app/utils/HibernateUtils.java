@@ -1,4 +1,4 @@
-package com.astondev.app.db;
+package com.astondev.app.utils;
 
 import java.util.logging.Logger;
 

@@ -11,20 +11,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
 
 @Entity
 @Table(name="users")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString(includeFieldNames = true)
+@Data
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id_seq")
@@ -43,4 +35,10 @@ public class User {
 
     @Column(name= "age")
     private Integer age;
+
+    public User(String name, String email, Integer age) {
+        this.name = name;
+        this.email = email;
+        this.age = age;
+    }
 }
