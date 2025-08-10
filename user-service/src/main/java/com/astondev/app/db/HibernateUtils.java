@@ -8,9 +8,9 @@ import org.hibernate.cfg.Configuration;
 
 public class HibernateUtils {
     private static final Logger logger = Logger.getLogger(HibernateUtils.class.getName());
-    private static final SessionFactory sessionFactory;
+    private static SessionFactory sessionFactory;
 
-    static {
+    private void initializeSessionFactory() {
         try {
             logger.info("Initializing Hibernate SessionFactory...");
             sessionFactory = new Configuration()
@@ -24,6 +24,9 @@ public class HibernateUtils {
     }
     
     public static SessionFactory getSessionFactory() {
+        if (sessionFactory == null) {
+            new HibernateUtils().initializeSessionFactory();
+        }
         return sessionFactory;
     }
 
