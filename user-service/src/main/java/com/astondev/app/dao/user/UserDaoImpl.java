@@ -26,13 +26,13 @@ public class UserDaoImpl implements UserDao {
             logger.info("User created: " + user.getName());
         } catch (ConstraintViolationException e) {
             rollbackIfActive(transaction);
-            throw new UserDaoException("User creation failed due to constraint violation: " + e.getMessage(), e);
+            throw new UserDaoException("Нарушение уникальности при создании пользователя: " + e.getMessage(), e);
         } catch (HibernateException e) {
             rollbackIfActive(transaction);
-            throw new UserDaoException("Hibernate error during user creation: " + e.getMessage(), e);
+            throw new UserDaoException("Ошибка работы с Hibernate при создании пользователя: " + e.getMessage(), e);
         } catch (Exception e) {
             rollbackIfActive(transaction);
-            throw new UserDaoException("Error creating user: " + e.getMessage(), e);
+            throw new UserDaoException("Неизвестная ошибка при создании пользователя: " + e.getMessage(), e);
         }
     }
 
@@ -49,15 +49,12 @@ public class UserDaoImpl implements UserDao {
             } else {
                 logger.warning("User with ID " + id + " not found.");
             }
-        } catch (ConstraintViolationException e) {
-            rollbackIfActive(transaction);
-            throw new UserDaoException("User deletion failed due to constraint violation: " + e.getMessage(), e);
         } catch (HibernateException e) {
             rollbackIfActive(transaction);
-            throw new UserDaoException("Hibernate error during user deletion: " + e.getMessage(), e);
+            throw new UserDaoException("Ошибка Hibernate при удалении пользовател: " + e.getMessage(), e);
         } catch (Exception e) {
             rollbackIfActive(transaction);
-            throw new UserDaoException("Error deleting user: " + e.getMessage(), e);
+            throw new UserDaoException("Неизвестная ошибка при удалении пользователя: " + e.getMessage(), e);
         }
         return false;
     }
@@ -71,12 +68,10 @@ public class UserDaoImpl implements UserDao {
             } else {
                 logger.warning("User with ID " + id + " not found.");
                 }
-        } catch (ConstraintViolationException e) {
-            throw new UserDaoException("User retrieval failed due to constraint violation: " + e.getMessage(), e);
         } catch (HibernateException e) {
-            throw new UserDaoException("Hibernate error during user retrieval: " + e.getMessage(), e);
+            throw new UserDaoException("Ошибка Hibernate при получении пользователя: " + e.getMessage(), e);
         } catch (Exception e) {
-            throw new UserDaoException("Error retrieving user: " + e.getMessage(), e);
+            throw new UserDaoException("Неизвестная ошибка при получении пользователя: " + e.getMessage(), e);
         }
         return null;
     }
@@ -94,15 +89,12 @@ public class UserDaoImpl implements UserDao {
             transaction.commit();
             logger.info("User updated: " + updatedUser.getName());
             return true;   
-        } catch (ConstraintViolationException e) {
-            rollbackIfActive(transaction);
-            throw new UserDaoException("User update failed due to constraint violation: " + e.getMessage(), e);
         } catch (HibernateException e) {
             rollbackIfActive(transaction);
-            throw new UserDaoException("Hibernate error during user update: " + e.getMessage(), e);
+            throw new UserDaoException("Ошибка Hibernate при обновлении пользователя: " + e.getMessage(), e);
         } catch (Exception e) {
             rollbackIfActive(transaction);
-            throw new UserDaoException("Error updating user: " + e.getMessage(), e);
+            throw new UserDaoException("Неизвестная ошибка при обновлении пользователя: " + e.getMessage(), e);
         }
     }
 
@@ -111,9 +103,9 @@ public class UserDaoImpl implements UserDao {
             List<User> users = session.createQuery("from User", User.class).list();
             return users;
         } catch (HibernateException e) {
-            throw new UserDaoException("Hibernate error during user retrieval: " + e.getMessage(), e);
+            throw new UserDaoException("Ошибка Hibernate при получении списка пользователей: " + e.getMessage(), e);
         } catch (Exception e) {
-            throw new UserDaoException("Error retrieving users: " + e.getMessage(), e);
+            throw new UserDaoException("Неизвестная ошибка при получении списка пользователей: " + e.getMessage(), e);
         }
     }
     

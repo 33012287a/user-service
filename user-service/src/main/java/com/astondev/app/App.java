@@ -1,8 +1,10 @@
 package com.astondev.app;
 
+import com.astondev.app.service.UserServiceApp;
+
 public class App {
 
     public static void main(String[] args) {
-        new UserConsoleApp().start();
+        new UserServiceApp().start();
     }
 }
