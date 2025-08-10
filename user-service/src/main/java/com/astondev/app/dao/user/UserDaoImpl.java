@@ -62,7 +62,7 @@ public class UserDaoImpl implements UserDao {
         return false;
     }
 
-    public User getUserById(long id) {
+    public User getUserById(long id) throws UserDaoException {
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             User user = session.find(User.class, id);
             if (user != null) {
@@ -81,7 +81,7 @@ public class UserDaoImpl implements UserDao {
         return null;
     }
 
-    public boolean updateUser(User updatedUser) {
+    public boolean updateUser(User updatedUser) throws UserDaoException {
         Transaction transaction = null;
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -98,16 +98,15 @@ public class UserDaoImpl implements UserDao {
             rollbackIfActive(transaction);
             throw new UserDaoException("User update failed due to constraint violation: " + e.getMessage(), e);
         } catch (HibernateException e) {
-           rollbackIfActive(transaction);
+            rollbackIfActive(transaction);
             throw new UserDaoException("Hibernate error during user update: " + e.getMessage(), e);
         } catch (Exception e) {
             rollbackIfActive(transaction);
             throw new UserDaoException("Error updating user: " + e.getMessage(), e);
         }
-        return false;
     }
 
-    public List<User> getAllUsers() {
+    public List<User> getAllUsers() throws UserDaoException{
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             List<User> users = session.createQuery("from User", User.class).list();
             return users;
@@ -116,12 +115,12 @@ public class UserDaoImpl implements UserDao {
         } catch (Exception e) {
             throw new UserDaoException("Error retrieving users: " + e.getMessage(), e);
         }
-        return null;
     }
     
     private void rollbackIfActive(Transaction transaction) {
         if (transaction != null && transaction.isActive()) {
             transaction.rollback();
         }
+    }
 }
 

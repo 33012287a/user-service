@@ -12,5 +12,4 @@ public class UserDaoException extends Exception {
     public UserDaoException(Throwable cause) {
         super(cause);
     }
-
 }
