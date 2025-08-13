@@ -1,15 +1,28 @@
-package com.astondev.app;
+package com.astondev.app.service;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.astondev.app.dao.user.UserDaoImpl;
+import com.astondev.app.exceptions.UserDaoException;
 import com.astondev.app.model.user.User;
 import com.astondev.app.utils.InputValidator;
 
-public class UserConsoleApp {
-    private final Scanner scanner = new Scanner(System.in);
-    private final UserDaoImpl userDao = new UserDaoImpl();
+public class UserServiceApp {
+    private static final Logger logger = Logger.getLogger(UserServiceApp.class.getName());
+    private final Scanner scanner;
+    private final UserDaoImpl userDao;
+
+    public UserServiceApp() {
+        this(new Scanner(System.in), new UserDaoImpl());
+    }
+
+    public UserServiceApp(Scanner scanner, UserDaoImpl userDaoImpl) {
+        this.scanner = scanner;
+        this.userDao = userDaoImpl;
+    }
 
     public void start() {
         while(true) {
@@ -38,7 +51,7 @@ public class UserConsoleApp {
                 4 - Показать всех пользователей
                 5 - Выход
                 ===========================
-                Введите команду: """);
+                Введите команду:  """);
     }
 
     public void createUser() {
@@ -56,9 +69,13 @@ public class UserConsoleApp {
             }
             Integer age = Integer.parseInt(ageInput);
             userDao.createUser(new User(name, email, age));
-
             System.out.println("Пользователь успешно добавлен.");
+        } catch (UserDaoException e) {
+            logger.log(Level.WARNING, "Ошибка базы данных при добавлении пользователя", e);
+            System.out.println("Ошибка базы данных: " + e.getMessage());
+            return;
         } catch (Exception e) {
+            logger.log(Level.SEVERE, "Неизвестная ошибка при добавлении пользователя", e);
             System.out.println("Произошла ошибка при добавлении пользователя: " + e.getMessage());
             return;
         }
@@ -78,6 +95,9 @@ public class UserConsoleApp {
         } catch (NumberFormatException e) {
             System.out.println("Некорректный ID пользователя. Пожалуйста, введите числовой ID.");
             return;
+        } catch (UserDaoException e) {
+            System.out.println("Ошибка базы данных: " + e.getMessage());
+            return;
         } catch (Exception e) {
             System.out.println("Произошла ошибка при удалении пользователя: " + e.getMessage());
             return;
@@ -86,21 +106,19 @@ public class UserConsoleApp {
 
     public void updateUser() {
         System.out.println("Введите ID пользователя для изменения:");
-        Long userId = Long.parseLong(scanner.nextLine());
-
-        User user = userDao.getUserById(userId);
-        if (user == null) {
-            System.out.println("Пользователь с ID " + userId + " не найден.");
-            return;
-        }
-
-        System.out.println("Введите новое имя пользователя:");
-        String name = scanner.nextLine();
-        System.out.println("Введите новый email пользователя:");
-        String email = scanner.nextLine();
-        System.out.println("Введите новый возраст пользователя:");
-
         try {
+            Long userId = Long.parseLong(scanner.nextLine());
+            User user = userDao.getUserById(userId);
+            if (user == null) {
+                System.out.println("Пользователь с ID " + userId + " не найден.");
+                return;
+            }
+
+            System.out.println("Введите новое имя пользователя:");
+            String name = scanner.nextLine();
+            System.out.println("Введите новый email пользователя:");
+            String email = scanner.nextLine();
+            System.out.println("Введите новый возраст пользователя:");
             String ageInput = scanner.nextLine();
             if (!InputValidator.isValidAge(ageInput)) {
                 System.out.println("Некорректный возраст. Пожалуйста, введите корректный возраст.");
@@ -114,8 +132,19 @@ public class UserConsoleApp {
             );
             updated.setId(userId);
 
-            userDao.updateUser(updated);
-            System.out.println("Пользователь с ID " + userId + " успешно изменен.");
+            boolean updateOk = userDao.updateUser(updated);
+            if (updateOk) {
+                System.out.println("Пользователь с ID " + userId + " успешно изменен.");
+            } else {
+                System.out.println("Не удалось изменить пользователя с ID " + userId + ".");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Некорректный ID пользователя. Пожалуйста, введите числовой ID.");
+            return;
+        } catch (UserDaoException e) {
+            System.out.println("Ошибка базы данных: " + e.getMessage());
+            return;
         } catch (Exception e) {
             System.out.println("Произошла ошибка при изменении пользователя: " + e.getMessage());
             return;
@@ -124,14 +153,25 @@ public class UserConsoleApp {
     }
 
     public void showAllUsers() {
-        List<User> userList = userDao.getAllUsers();
-        if (userList != null && !userList.isEmpty()) {
-            System.out.println("Список всех пользователей:");
-            for (User user : userList) {
-                System.out.println("Id "+ user.getId() + "\t Имя: " + user.getName() + "\t Email: " + user.getEmail() + "\t Возраст: " + user.getAge());
+        try {
+            List<User> userList = userDao.getAllUsers();
+            if (userList != null && !userList.isEmpty()) {
+                System.out.println("Список всех пользователей:");
+                for (User user : userList) {
+                    System.out.println("Id "+ user.getId() +
+                                " | Имя: " + user.getName() +
+                                " | Email: " + user.getEmail() +
+                                " | Возраст: " + user.getAge());
             }
         } else {
             System.out.println("Нет пользователей для отображения.");
+        }
+    } catch (UserDaoException e) {
+            System.out.println("Ошибка базы данных: " + e.getMessage());
+            return;
+        } catch (Exception e) {
+            System.out.println("Произошла ошибка при получении списка пользователей: " + e.getMessage());
+            return;
         }
     }
 }
