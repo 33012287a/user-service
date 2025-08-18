@@ -5,6 +5,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.astondev.app.dao.user.UserDao;
 import com.astondev.app.dao.user.UserDaoImpl;
 import com.astondev.app.exceptions.UserDaoException;
 import com.astondev.app.model.user.User;
@@ -13,15 +14,15 @@ import com.astondev.app.utils.InputValidator;
 public class UserServiceApp {
     private static final Logger logger = Logger.getLogger(UserServiceApp.class.getName());
     private final Scanner scanner;
-    private final UserDaoImpl userDao;
+    private final UserDao userDao;
 
     public UserServiceApp() {
         this(new Scanner(System.in), new UserDaoImpl());
     }
 
-    public UserServiceApp(Scanner scanner, UserDaoImpl userDaoImpl) {
+    public UserServiceApp(Scanner scanner, UserDao userDao) {
         this.scanner = scanner;
-        this.userDao = userDaoImpl;
+        this.userDao = userDao;
     }
 
     public void start() {

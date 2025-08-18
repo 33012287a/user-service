@@ -1,1 +1,3 @@
 /workspaces/user-service1/user-service/src/test/java/com/astondev/app/AppTest.java
+/workspaces/user-service1/user-service/src/test/java/com/astondev/app/dao/user/UserDaoImplTest.java
+/workspaces/user-service1/user-service/src/test/java/com/astondev/app/service/UserServiceAppTest.java

@@ -1,1 +1,3 @@
 com/astondev/app/AppTest.class
+com/astondev/app/dao/user/UserDaoImplTest.class
+com/astondev/app/service/UserServiceAppTest.class

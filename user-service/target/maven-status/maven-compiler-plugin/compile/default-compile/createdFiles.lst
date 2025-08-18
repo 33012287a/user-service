@@ -1,5 +1,8 @@
-com/astondev/app/db/HibernateUtils.class
 com/astondev/app/model/user/User.class
 com/astondev/app/dao/user/UserDao.class
 com/astondev/app/App.class
-com/astondev/app/repository/UserConsoleApp.class
+com/astondev/app/dao/user/UserDaoImpl.class
+com/astondev/app/utils/InputValidator.class
+com/astondev/app/utils/HibernateUtils.class
+com/astondev/app/exceptions/UserDaoException.class
+com/astondev/app/service/UserServiceApp.class
