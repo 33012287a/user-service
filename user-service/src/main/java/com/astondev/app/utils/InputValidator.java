@@ -8,4 +8,12 @@ public class InputValidator {
             return false;
         }
     }
+
+    public static boolean isValidId(String id) {
+        try {
+            return Long.parseLong(id) >= 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
 }
