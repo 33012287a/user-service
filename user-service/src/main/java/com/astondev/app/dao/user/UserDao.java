@@ -5,7 +5,7 @@ import java.util.List;
 import com.astondev.app.exceptions.UserDaoException;
 
 public interface UserDao {
-    void createUser(User user) throws UserDaoException;
+    boolean createUser(User user) throws UserDaoException;
     User getUserById(long id) throws UserDaoException;
     List<User> getAllUsers() throws UserDaoException;
     boolean deleteUserById(Long id) throws UserDaoException;

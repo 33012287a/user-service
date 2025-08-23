@@ -17,13 +17,14 @@ import com.astondev.app.utils.HibernateUtils;
 public class UserDaoImpl implements UserDao {
     private static final Logger logger = Logger.getLogger(UserDaoImpl.class.getName());
     
-    public void createUser(User user) throws UserDaoException{
+    public boolean createUser(User user) throws UserDaoException{
         Transaction transaction = null;
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             session.persist(user);
             transaction.commit();
             logger.info("User created: " + user.getName());
+            return true;
         } catch (ConstraintViolationException e) {
             rollbackIfActive(transaction);
             throw new UserDaoException("Нарушение уникальности при создании пользователя: " + e.getMessage(), e);
@@ -81,11 +82,7 @@ public class UserDaoImpl implements UserDao {
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             User user = session.find(User.class, updatedUser.getId());
-            if (user != null) {
-                user.setName(updatedUser.getName());
-                user.setAge(updatedUser.getAge());
-                user.setEmail(updatedUser.getEmail());
-            }
+            session.merge(updatedUser);
             transaction.commit();
             logger.info("User updated: " + updatedUser.getName());
             return true;   
