@@ -1,4 +1,4 @@
-package com.astondev.app.service;
+package com.astondev.app;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -9,6 +9,7 @@ import java.util.Scanner;
 import com.astondev.app.dao.user.UserDaoImpl;
 import com.astondev.app.exceptions.UserDaoException;
 import com.astondev.app.model.user.User;
+import com.astondev.app.service.UserServiceApp;
 import com.astondev.app.utils.InputValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 

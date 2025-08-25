@@ -3,10 +3,7 @@ package com.astondev.app.dao.user;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.hibernate.Hibernate;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
+import org.hibernate.*;
 import org.hibernate.exception.ConstraintViolationException;
 
 import com.astondev.app.exceptions.UserDaoException;
@@ -16,7 +13,17 @@ import com.astondev.app.utils.HibernateUtils;
 
 public class UserDaoImpl implements UserDao {
     private static final Logger logger = Logger.getLogger(UserDaoImpl.class.getName());
-    
+    private SessionFactory sessionFactory;
+
+    public UserDaoImpl() {
+        this.sessionFactory = HibernateUtils.getSessionFactory();
+    }
+
+    public UserDaoImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+
+
     public boolean createUser(User user) throws UserDaoException{
         Transaction transaction = null;
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
