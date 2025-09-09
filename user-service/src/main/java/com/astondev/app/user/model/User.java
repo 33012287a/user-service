@@ -1,4 +1,4 @@
-package com.astondev.app.model.user;
+package com.astondev.app.user.model;
 
 import java.time.LocalDateTime;
 
@@ -23,11 +23,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id_seq")
-    @SequenceGenerator(name = "users_id_seq", sequenceName = "users_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="name")
+    @Column(name="username")
     private String name;
 
     @Column(name = "email")
